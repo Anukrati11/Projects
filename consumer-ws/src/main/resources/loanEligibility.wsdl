@@ -1,0 +1,70 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:sch="http://www.javatechie.com/spring/soap/api/loanEligibility"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:tns="http://www.javatechie.com/spring/soap/api/loanEligibility"
+                  targetNamespace="http://www.javatechie.com/spring/soap/api/loanEligibility">
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                   elementFormDefault="qualified"
+                   targetNamespace="http://www.javatechie.com/spring/soap/api/loanEligibility">
+            <!--     Request Message -->
+            <xs:element name="CustomerRequest">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="customerName"
+                                    type="xs:string"/>
+                        <xs:element name="age"
+                                    type="xs:int"/>
+                        <xs:element name="yearlyIncome"
+                                    type="xs:long"/>
+                        <xs:element name="cibilScore"
+                                    type="xs:int"/>
+                        <xs:element name="employmentMode"
+                                    type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <!--     Response Message -->
+            <xs:element name="Acknowledgement">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="isEligible"
+                                    type="xs:boolean"/>
+                        <xs:element name="approvedAmount"
+                                    type="xs:long"/>
+                        <xs:element maxOccurs="unbounded"
+                                    name="CriteriaMismatch"
+                                    type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="CustomerRequest">
+        <wsdl:part element="tns:CustomerRequest"
+                   name="CustomerRequest"></wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="LoanEligibilityIndicator">
+        <wsdl:operation name="Customer">
+            <wsdl:input message="tns:CustomerRequest"
+                        name="CustomerRequest"></wsdl:input>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="LoanEligibilityIndicatorSoap11"
+                  type="tns:LoanEligibilityIndicator">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="Customer">
+            <soap:operation soapAction=""/>
+            <wsdl:input name="CustomerRequest">
+                <soap:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="LoanEligibilityIndicatorService">
+        <wsdl:port binding="tns:LoanEligibilityIndicatorSoap11"
+                   name="LoanEligibilityIndicatorSoap11">
+            <soap:address location="http://localhost:9090/ws"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1osvlyc" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.28.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
+  <bpmn:process id="Process_10m1r57" isExecutable="true">
+    <bpmn:extensionElements>
+      <zeebe:userTaskForm id="UserTaskForm_1d707o0">{
+  "components": [
+    {
+      "label": "No of leaves",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_1lotjxl",
+        "columns": null
+      },
+      "id": "Field_0mxhtgy",
+      "key": "noOfDays",
+      "defaultValue": "0",
+      "description": "no of leaves employee want to apply"
+    }
+  ],
+  "type": "default",
+  "id": "Form_1ub6ixr",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.6.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.28.0"
+  },
+  "schemaVersion": 16
+}</zeebe:userTaskForm>
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="StartEvent_1" name="Leave application start">
+      <bpmn:outgoing>Flow_0jqm26f</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Activity_148ewq9" name="Check Leave Balance">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="check-leave-balance" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_09tnf6y</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rucwh5</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Activity_11ya0m8" name="Manager Approval">
+      <bpmn:extensionElements>
+        <zeebe:assignmentDefinition assignee="Anukrati Verma" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0joc7cr</bpmn:incoming>
+      <bpmn:outgoing>Flow_0etnprq</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_06vtoyl" name="Approved">
+      <bpmn:incoming>Flow_0mj952y</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="Gateway_16q829g" name="Enough Leave Balance?">
+      <bpmn:incoming>Flow_0rucwh5</bpmn:incoming>
+      <bpmn:outgoing>Flow_1tkojz6</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0joc7cr</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0rucwh5" sourceRef="Activity_148ewq9" targetRef="Gateway_16q829g" />
+    <bpmn:endEvent id="Event_1qqfyyo" name="Leave Rejected">
+      <bpmn:incoming>Flow_1tkojz6</bpmn:incoming>
+      <bpmn:incoming>Flow_12ydcgy</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1tkojz6" sourceRef="Gateway_16q829g" targetRef="Event_1qqfyyo">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=false
+</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0joc7cr" sourceRef="Gateway_16q829g" targetRef="Activity_11ya0m8">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=true
+</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="Gateway_12hq45t" name="Is Manager Approved ?">
+      <bpmn:incoming>Flow_0etnprq</bpmn:incoming>
+      <bpmn:outgoing>Flow_12ydcgy</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1wtsknc</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0etnprq" sourceRef="Activity_11ya0m8" targetRef="Gateway_12hq45t" />
+    <bpmn:sequenceFlow id="Flow_12ydcgy" sourceRef="Gateway_12hq45t" targetRef="Event_1qqfyyo">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=false</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Activity_1s2wag4" name="Update Leave Balance">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="check-leave-balance" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1wtsknc</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mj952y</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1wtsknc" sourceRef="Gateway_12hq45t" targetRef="Activity_1s2wag4">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=true
+</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0mj952y" sourceRef="Activity_1s2wag4" targetRef="Event_06vtoyl" />
+    <bpmn:userTask id="Activity_1bnmpb1" name="Leave application">
+      <bpmn:extensionElements>
+        <zeebe:formDefinition formKey="camunda-forms:bpmn:UserTaskForm_1d707o0" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0jqm26f</bpmn:incoming>
+      <bpmn:outgoing>Flow_09tnf6y</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0jqm26f" sourceRef="StartEvent_1" targetRef="Activity_1bnmpb1" />
+    <bpmn:sequenceFlow id="Flow_09tnf6y" sourceRef="Activity_1bnmpb1" targetRef="Activity_148ewq9" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_10m1r57">
+      <bpmndi:BPMNShape id="Gateway_16q829g_di" bpmnElement="Gateway_16q829g" isMarkerVisible="true">
+        <dc:Bounds x="565" y="92" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="554" y="55" width="71" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1qqfyyo_di" bpmnElement="Event_1qqfyyo">
+        <dc:Bounds x="572" y="252" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="552" y="295" width="77" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_148ewq9_di" bpmnElement="Activity_148ewq9">
+        <dc:Bounds x="420" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="182" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="158" y="142" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1bnmpb1_di" bpmnElement="Activity_1bnmpb1">
+        <dc:Bounds x="280" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_11ya0m8_di" bpmnElement="Activity_11ya0m8">
+        <dc:Bounds x="670" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_12hq45t_di" bpmnElement="Gateway_12hq45t" isMarkerVisible="true">
+        <dc:Bounds x="825" y="92" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="821" y="54.5" width="57" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1s2wag4_di" bpmnElement="Activity_1s2wag4">
+        <dc:Bounds x="940" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_06vtoyl_di" bpmnElement="Event_06vtoyl">
+        <dc:Bounds x="1102" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1096" y="142" width="47" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0etnprq_di" bpmnElement="Flow_0etnprq">
+        <di:waypoint x="770" y="117" />
+        <di:waypoint x="825" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12ydcgy_di" bpmnElement="Flow_12ydcgy">
+        <di:waypoint x="850" y="142" />
+        <di:waypoint x="850" y="270" />
+        <di:waypoint x="608" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wtsknc_di" bpmnElement="Flow_1wtsknc">
+        <di:waypoint x="875" y="117" />
+        <di:waypoint x="940" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mj952y_di" bpmnElement="Flow_0mj952y">
+        <di:waypoint x="1040" y="117" />
+        <di:waypoint x="1102" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rucwh5_di" bpmnElement="Flow_0rucwh5">
+        <di:waypoint x="520" y="117" />
+        <di:waypoint x="565" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1tkojz6_di" bpmnElement="Flow_1tkojz6">
+        <di:waypoint x="590" y="142" />
+        <di:waypoint x="590" y="252" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0joc7cr_di" bpmnElement="Flow_0joc7cr">
+        <di:waypoint x="615" y="117" />
+        <di:waypoint x="670" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09tnf6y_di" bpmnElement="Flow_09tnf6y">
+        <di:waypoint x="380" y="117" />
+        <di:waypoint x="420" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jqm26f_di" bpmnElement="Flow_0jqm26f">
+        <di:waypoint x="218" y="117" />
+        <di:waypoint x="280" y="117" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
