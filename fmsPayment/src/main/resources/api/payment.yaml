@@ -1,0 +1,82 @@
+openapi: 3.0.0
+info:
+  title: Payment Microservice
+  version: 1.0.0
+  description: API for handling payments.
+
+paths:
+  /payments:
+    post:
+      summary: Initiate a payment
+      description: Create a payment request
+      operationId: createPayment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+      responses:
+        '201':
+          description: Payment created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+        '400':
+          description: Invalid payment details
+        '500':
+          description: Internal server error
+
+  /payments/{paymentId}:
+    get:
+      summary: Get payment status
+      description: Retrieve the status of a payment
+      operationId: getPaymentStatus
+      parameters:
+        - name: paymentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment status retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentStatus'
+        '404':
+          description: Payment not found
+
+components:
+  schemas:
+    PaymentRequest:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: double
+        currency:
+          type: string
+        userId:
+          type: string
+        method:
+          type: string
+    PaymentResponse:
+      type: object
+      properties:
+        paymentId:
+          type: string
+        status:
+          type: string
+    PaymentStatus:
+      type: object
+      properties:
+        paymentId:
+          type: string
+        status:
+          type: string
+        transactionDate:
+          type: string
+          format: date-time
